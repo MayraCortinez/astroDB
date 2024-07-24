@@ -1,0 +1,37 @@
+---
+import {db, User, Todo, eq} from 'astro:db'; //importo las tablas
+const users = await db.select().from(User); //Hago un llamado a la tabla con el método select porque astroDB es SQL
+const todosFirstUser = await db
+.select()
+.from(Todo)
+.innerJoin(User, eq(Todo.user_id, User.id)) //utilizo el método innerJoin para unir en la consulta a las dos tablas relacionadas.
+.where(eq(User.id, 1)) //establezco la condición de filtrado
+console.log(todosFirstUser);
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>Usuarios</h1>
+		<ul>
+			{
+				users.map(({username}) => ( <li>Nombre: {username}</li> ))         /* Recorro la variable que contiene la información de la tabla. */
+			}
+        </ul>
+		<h1>Tareas del primer usuario</h1>
+		<ul>
+			{
+				todosFirstUser.map((todoFirstUser) => ( 
+				<li>Titulo: {todoFirstUser.Todo.title} </li>
+				<li>Descripción: {todoFirstUser.Todo.description}</li>
+			))
+			}
+		</ul>
+	</body>
+</html>
